@@ -1,5 +1,12 @@
-import type { Lesson, LessonMeta } from "@/types";
+import type { Lesson, LessonMeta, LessonBody } from "@/types";
 import { courses } from "./courses";
+import { foundations } from "./lessons/foundations";
+import { dataStats } from "./lessons/data-stats";
+import { coreModels } from "./lessons/core-models";
+import { shipping } from "./lessons/shipping";
+import { neural } from "./lessons/neural";
+import { visionSequences } from "./lessons/vision-sequences";
+import { genai } from "./lessons/genai";
 
 /**
  * Hand-authored, full lessons. Not every lesson in the outline is written to
@@ -7,7 +14,8 @@ import { courses } from "./courses";
  * route renders real, useful scaffolding instead of a 404. Authoring a new
  * lesson = add an entry here; nothing else changes.
  */
-const authored: Record<string, Omit<Lesson, keyof LessonMeta | "courseId" | "moduleId">> = {
+/** The three flagship, hand-authored lessons. The rest live in ./lessons/*. */
+const core: Record<string, LessonBody> = {
   "what-is-ml": {
     story:
       "Imagine you run a tiny bakery. Every morning you guess how many loaves to bake. Bake too few and customers leave angry; too many and they go stale. After years, your gut 'just knows' — rainy Mondays are slow, sunny weekends are chaos. Machine Learning is teaching a computer to build that same gut feeling from data, instead of you writing down every rule by hand.",
@@ -304,6 +312,21 @@ print(round(float(sigmoid(z)), 3))`,
       "Learning = adjusting weights & bias",
     ],
   },
+};
+
+/**
+ * Every authored lesson, merged from the modular batch files.
+ * Adding a lesson body to any ./lessons/* file makes it live instantly.
+ */
+const authored: Record<string, LessonBody> = {
+  ...core,
+  ...foundations,
+  ...dataStats,
+  ...coreModels,
+  ...shipping,
+  ...neural,
+  ...visionSequences,
+  ...genai,
 };
 
 /** Build a structured fallback so unlisted lessons still render usefully. */

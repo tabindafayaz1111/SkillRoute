@@ -52,6 +52,9 @@ export interface Lesson extends LessonMeta {
   cheatsheet: string[];
 }
 
+/** The rich body of a lesson (everything except the metadata + ids). */
+export type LessonBody = Omit<Lesson, keyof LessonMeta | "courseId" | "moduleId">;
+
 export type LessonVisualization =
   | { type: "linear-regression" }
   | { type: "gradient-descent" }
