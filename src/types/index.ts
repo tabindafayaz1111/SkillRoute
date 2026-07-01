@@ -11,6 +11,8 @@ export interface Course {
   estimatedHours: number;
   projectCount: number;
   accent: string; // hex for charts / glows
+  category: string; // groups courses on the catalog page
+  featured?: boolean; // surfaced on the homepage
   modules: Module[];
 }
 

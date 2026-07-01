@@ -16,7 +16,7 @@ import { AiParticles } from "@/components/home/ai-particles";
 import { CourseCard } from "@/components/home/course-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { courses, totalLessons } from "@/data/courses";
+import { courses, featuredCourses, totalLessons } from "@/data/courses";
 
 const features = [
   { icon: BookOpenCheck, title: "Story-first lessons", text: "Every concept starts with a real-life story, a picture, and an analogy — maths comes last, once it clicks." },
@@ -29,8 +29,8 @@ const features = [
 
 const stats = [
   { value: `${totalLessons()}+`, label: "Interactive lessons" },
-  { value: "30+", label: "Hands-on projects" },
-  { value: "2", label: "Full courses (more soon)" },
+  { value: `${courses.length}`, label: "Courses across 5 tracks" },
+  { value: "150+", label: "Hands-on projects" },
   { value: "100%", label: "Free, forever" },
 ];
 
@@ -113,13 +113,20 @@ export default function HomePage() {
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-black md:text-4xl">Pick your path</h2>
           <p className="mt-2 text-muted-foreground">
-            Two complete journeys today — the platform is built to hold unlimited courses.
+            Featured tracks to get you started — {courses.length} courses in total across 5 tracks.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-2">
-          {courses.map((c, i) => (
+          {featuredCourses().map((c, i) => (
             <CourseCard key={c.id} course={c} index={i} />
           ))}
+        </div>
+        <div className="mt-10 text-center">
+          <Button asChild size="lg" variant="outline">
+            <Link href="/courses">
+              Browse all {courses.length} courses <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </section>
 

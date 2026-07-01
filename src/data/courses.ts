@@ -1,14 +1,19 @@
 import type { Course } from "@/types";
+import { languages } from "./courses/languages";
+import { web } from "./courses/web";
+import { analytics } from "./courses/analytics";
+import { aitools } from "./courses/aitools";
 
 /**
- * The curriculum spine. Adding a course here makes it appear everywhere
- * (home, courses grid, dashboard, search) — the UI is fully data-driven,
- * so the platform scales to unlimited courses with no component changes.
+ * The curriculum spine. Adding a course here (or in any ./courses/* file) makes
+ * it appear everywhere — home, courses grid, dashboard, search — because the UI
+ * is fully data-driven. The platform scales to unlimited courses and categories
+ * with no component changes.
  *
- * Lesson bodies live in `lessons.ts`. Metadata (title/xp/minutes) lives here
- * so the outline renders instantly without loading full lesson content.
+ * ML & DL have full hand-authored lesson bodies (see lessons.ts). Other courses
+ * currently render with the structured lesson template until authored to depth.
  */
-export const courses: Course[] = [
+const aiCourses: Course[] = [
   {
     id: "machine-learning",
     title: "Machine Learning",
@@ -21,6 +26,8 @@ export const courses: Course[] = [
     difficulty: "Beginner",
     estimatedHours: 60,
     projectCount: 14,
+    category: "AI & Machine Learning",
+    featured: true,
     modules: [
       {
         id: "foundations",
@@ -81,6 +88,8 @@ export const courses: Course[] = [
     difficulty: "Intermediate",
     estimatedHours: 75,
     projectCount: 16,
+    category: "AI & Machine Learning",
+    featured: true,
     modules: [
       {
         id: "neural-foundations",
@@ -127,6 +136,36 @@ export const courses: Course[] = [
     ],
   },
 ];
+
+/** Every course across every category, in display order. */
+export const courses: Course[] = [
+  ...aiCourses,
+  ...languages,
+  ...web,
+  ...analytics,
+  ...aitools,
+];
+
+/** Category display order for the catalog page. */
+export const categories: string[] = [
+  "AI & Machine Learning",
+  "AI Engineering & Tools",
+  "Programming Languages",
+  "Web & Full-Stack Development",
+  "Data & Analytics",
+];
+
+/** Courses grouped by category, honoring the `categories` order. */
+export function coursesByCategory() {
+  return categories
+    .map((name) => ({ name, items: courses.filter((c) => c.category === name) }))
+    .filter((g) => g.items.length > 0);
+}
+
+/** The handful of courses surfaced on the homepage. */
+export function featuredCourses() {
+  return courses.filter((c) => c.featured);
+}
 
 export function getCourse(id: string) {
   return courses.find((c) => c.id === id);
