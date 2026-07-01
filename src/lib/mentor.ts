@@ -31,6 +31,16 @@ const KNOWLEDGE: { match: RegExp; reply: string }[] = [
       "A neuron is just a tiny decision-maker. It takes some inputs, decides how important each one is (those importances are called *weights*), adds them up, and fires a number out the other side.\n\nExample: deciding whether to go for a run. Inputs might be 'is it raining?', 'did I sleep well?', 'do I have time?'. Rain has a strong negative weight; good sleep has a positive one. Add up the weighted votes → out pops a 'yes/no'.\n\nStack millions of these together in layers and you get a neural network. Want to try tuning one?",
   },
   {
+    match: /layer|forward pass|forward-pass|hidden|input to|feed.?forward/i,
+    reply:
+      "In a neural network, layers are stacked, and each layer feeds the next. Here's the key idea:\n\n**The input to layer 2 is simply the OUTPUT of layer 1.** Layer 1's neurons each take the raw inputs, do their weighted sum, apply an activation function, and each spits out one number. Collect all of layer 1's output numbers — that whole set becomes the input fed to every neuron in layer 2. Layer 2 does the same and passes its outputs to layer 3, and so on.\n\nThink of an assembly line: each station (layer) takes what the previous station produced, adds its own work, and hands it forward. That front-to-back flow is called the *forward pass*. Want the tiny numpy example that does this by hand?",
+  },
+  {
+    match: /epoch|batch|iteration/i,
+    reply:
+      "These three trip everyone up, so here's the plain version:\n\n- **Epoch** = one full pass through ALL your training data. Like reading a whole textbook once.\n- **Batch** = a small chunk of data the model looks at before updating itself (e.g. 32 examples at a time). Reading a few pages, then pausing to take notes.\n- **Iteration** = one batch processed (one note-taking step).\n\nSo if you have 1,000 examples and a batch size of 100, one epoch = 10 iterations. You usually train for many epochs so the model sees the data over and over and gradually improves. Want to see where these go in real training code?",
+  },
+  {
     match: /transformer|attention|gpt|llm|chatgpt/i,
     reply:
       "An LLM (like ChatGPT) is, at heart, a very fancy next-word predictor. Trained on mountains of text, it learned which words tend to follow which — but at a depth where it genuinely captures meaning, not just surface patterns.\n\nThe engine inside is the *Transformer*, and its superpower is *attention*: for each word, it decides which other words matter most for understanding it. In 'the trophy didn't fit in the suitcase because it was too big', attention is how the model figures out 'it' = the trophy.\n\nWant me to break attention down with a clearer example?",
@@ -78,7 +88,7 @@ const KNOWLEDGE: { match: RegExp; reply: string }[] = [
 ];
 
 const FALLBACK =
-  "Great question! Here's the short version, then tell me which part to go deeper on:\n\nMachine learning is teaching a computer to spot patterns from examples instead of you writing every rule by hand. You show it data, it finds the pattern, then it predicts on new data.\n\nWhat specifically would you like me to explain — a concept, some code, or how to get started? I'll keep it simple and concrete.";
+  "I'm running in *offline mode* right now, so I only have a handful of topics built in — and I don't want to give you a confident but wrong answer to this one. 🙏\n\nI can answer these offline: neurons & layers (forward pass), gradient descent, overfitting, transformers/LLMs, NumPy, Pandas, regression, classification, epochs/batches, projects, interviews, and \"where do I start\".\n\nTo let me answer *anything* correctly, the site owner just needs to add an ANTHROPIC_API_KEY in Vercel (Settings → Environment Variables) and redeploy — then I become a full Claude tutor. Meanwhile, try rephrasing toward one of the topics above and I'll dig in.";
 
 /** Offline responder — gives a real, useful answer based on keywords. */
 export function localMentorReply(question: string, _history: MentorMessage[] = []): string {
