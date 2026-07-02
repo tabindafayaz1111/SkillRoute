@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { AiParticles } from "@/components/home/ai-particles";
 import { CourseCard } from "@/components/home/course-card";
+import { ContinueLearning } from "@/components/home/continue-learning";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { courses, featuredCourses, totalLessons } from "@/data/courses";
@@ -59,7 +60,7 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="max-w-4xl text-5xl font-black leading-[1.05] tracking-tight md:text-7xl"
           >
-            Welcome to <span className="gradient-text">ML Academy</span>
+            Welcome to <span className="gradient-text">SkillRoute</span>
           </motion.h1>
 
           <motion.p
@@ -68,7 +69,7 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl"
           >
-            Learn Machine Learning and Deep Learning the way professionals actually do —
+            Learn programming, web development, data, and AI the way professionals actually do —
             through stories, visuals, live code, and real projects. Fun enough for a curious
             beginner, deep enough for a future expert.
           </motion.p>
@@ -108,6 +109,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== PERSONALIZED CONTINUE ===== */}
+      <ContinueLearning />
+
       {/* ===== COURSES ===== */}
       <section className="container py-16">
         <div className="mb-10 text-center">
@@ -138,7 +142,7 @@ export default function HomePage() {
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-muted-foreground">
             Duolingo&apos;s addictiveness, Brilliant&apos;s visuals, Kaggle&apos;s practicality —
-            focused entirely on ML &amp; DL.
+            across coding, data, and AI.
           </p>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

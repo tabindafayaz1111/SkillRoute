@@ -6,6 +6,15 @@ const config: Config = {
     "./src/pages/**/*.{ts,tsx}",
     "./src/components/**/*.{ts,tsx}",
     "./src/app/**/*.{ts,tsx}",
+    "./src/data/**/*.{ts,tsx}",
+  ],
+  // Course gradients are built from data strings; keep every stop generated
+  // regardless of static analysis so no course banner renders blank.
+  safelist: [
+    {
+      pattern:
+        /(from|via|to)-(slate|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(400|500|600|700)/,
+    },
   ],
   theme: {
     container: {

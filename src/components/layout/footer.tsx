@@ -1,10 +1,34 @@
 import Link from "next/link";
 import { BrainCircuit } from "lucide-react";
 
-const groups = [
-  { title: "Learn", links: ["Machine Learning", "Deep Learning", "Playground", "Roadmap"] },
-  { title: "Grow", links: ["Projects", "Interview Mode", "Resume Builder", "Certificates"] },
-  { title: "Explore", links: ["Research", "Glossary", "Datasets", "Model Zoo"] },
+const groups: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Tracks",
+    links: [
+      { label: "AI & Machine Learning", href: "/courses" },
+      { label: "Programming Languages", href: "/courses" },
+      { label: "Web & Full-Stack", href: "/courses" },
+      { label: "Data & Analytics", href: "/courses" },
+    ],
+  },
+  {
+    title: "Grow",
+    links: [
+      { label: "All Courses", href: "/courses" },
+      { label: "Playground", href: "/playground" },
+      { label: "Certificates", href: "/certificate" },
+      { label: "Leaderboard", href: "/leaderboard" },
+    ],
+  },
+  {
+    title: "Explore",
+    links: [
+      { label: "Dashboard", href: "/dashboard" },
+      { label: "History of AI", href: "/research" },
+      { label: "AI Mentor", href: "/dashboard" },
+      { label: "Roadmap", href: "/courses" },
+    ],
+  },
 ];
 
 export function Footer() {
@@ -17,12 +41,12 @@ export function Footer() {
               <BrainCircuit className="h-4 w-4" />
             </span>
             <span className="font-extrabold">
-              ML<span className="gradient-text">Academy</span>
+              Skill<span className="gradient-text">Route</span>
             </span>
           </Link>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            The most fun way to learn Machine Learning & Deep Learning — from absolute zero to
-            industry-ready, free forever.
+            The most fun way to learn to code, analyze data, and build with AI — from absolute zero
+            to job-ready. 21 courses across 5 tracks, free forever.
           </p>
         </div>
         {groups.map((g) => (
@@ -30,8 +54,10 @@ export function Footer() {
             <h4 className="text-sm font-semibold">{g.title}</h4>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {g.links.map((l) => (
-                <li key={l} className="cursor-pointer transition-colors hover:text-foreground">
-                  {l}
+                <li key={l.label}>
+                  <Link href={l.href} className="transition-colors hover:text-foreground">
+                    {l.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -39,7 +65,7 @@ export function Footer() {
         ))}
       </div>
       <div className="border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
-        Built with Next.js · Made for curious humans of every age.
+        Built with Next.js · Learn coding, data &amp; AI · Made for curious humans of every age.
       </div>
     </footer>
   );

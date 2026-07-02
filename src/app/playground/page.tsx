@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils";
 const SNIPPETS: Record<string, { label: string; code: string }> = {
   hello: {
     label: "Hello ML",
-    code: `# Welcome to the ML Academy Playground!
+    code: `# Welcome to the SkillRoute Playground!
 # This is REAL Python running in your browser (via Pyodide).
-print("Hello, future ML engineer! 🚀")
+print("Hello, future developer! 🚀")
 
 for i in range(1, 4):
-    print(f"Day {i}: I'm learning machine learning")`,
+    print(f"Day {i}: I'm learning to build things")`,
   },
   numpy: {
     label: "NumPy arrays",

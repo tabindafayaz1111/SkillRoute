@@ -11,10 +11,17 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swa
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "ML Academy — Learn Machine Learning & Deep Learning the fun way",
+  title: "SkillRoute — Learn to code, analyze data & build with AI",
   description:
-    "An interactive platform to learn Machine Learning and Deep Learning from absolute zero to industry expert. Stories, animations, live code, projects, and an AI mentor.",
-  keywords: ["machine learning", "deep learning", "AI course", "learn ML", "interactive"],
+    "An interactive platform to learn programming, web development, data analytics, and AI from absolute zero to job-ready. Stories, animations, live code, projects, and an AI mentor. 21 courses, free forever.",
+  keywords: [
+    "learn to code",
+    "programming courses",
+    "data analytics",
+    "machine learning",
+    "web development",
+    "interactive learning",
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

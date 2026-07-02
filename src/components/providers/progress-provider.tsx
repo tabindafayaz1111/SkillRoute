@@ -12,6 +12,7 @@
 import * as React from "react";
 
 export interface LearnerState {
+  displayName: string;
   xp: number;
   coins: number;
   streakDays: number;
@@ -25,6 +26,7 @@ export interface LearnerState {
 }
 
 const DEFAULT_STATE: LearnerState = {
+  displayName: "",
   xp: 0,
   coins: 0,
   streakDays: 0,
@@ -49,6 +51,7 @@ interface ProgressContextValue extends LearnerState {
   toggleBookmark: (lessonId: string) => void;
   saveNote: (lessonId: string, text: string) => void;
   recordQuiz: (lessonId: string, scorePct: number) => void;
+  setDisplayName: (name: string) => void;
   reset: () => void;
 }
 
@@ -166,6 +169,11 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     [touchStreak]
   );
 
+  const setDisplayName = React.useCallback(
+    (name: string) => setState((prev) => ({ ...prev, displayName: name })),
+    []
+  );
+
   const reset = React.useCallback(() => setState(DEFAULT_STATE), []);
 
   const derived = levelFromXp(state.xp);
@@ -180,6 +188,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     toggleBookmark,
     saveNote,
     recordQuiz,
+    setDisplayName,
     reset,
   };
 

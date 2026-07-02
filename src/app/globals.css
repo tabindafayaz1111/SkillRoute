@@ -104,6 +104,28 @@
   }
 }
 
+/* Print: isolate the certificate on its own page */
+@media print {
+  body {
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .certificate-print,
+  .certificate-print * {
+    visibility: visible;
+  }
+  .certificate-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

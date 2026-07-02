@@ -13,6 +13,7 @@ import {
   BookOpen,
   History,
   Code2,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -26,6 +27,7 @@ const links = [
   { href: "/playground", label: "Playground", icon: Code2 },
   { href: "/research", label: "Research", icon: History },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/certificate", label: "Certificate", icon: Award },
 ];
 
 export function Navbar() {
@@ -46,7 +48,7 @@ export function Navbar() {
             <BrainCircuit className="h-5 w-5" />
           </motion.span>
           <span className="text-lg font-extrabold tracking-tight">
-            ML<span className="gradient-text">Academy</span>
+            Skill<span className="gradient-text">Route</span>
           </span>
         </Link>
 
