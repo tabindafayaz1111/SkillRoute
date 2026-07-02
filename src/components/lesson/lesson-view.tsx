@@ -28,6 +28,8 @@ import {
   Clock,
   Zap,
   ChevronRight,
+  Award,
+  PartyPopper,
 } from "lucide-react";
 import type { Lesson, Course } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +41,7 @@ import { Visualization } from "@/components/lesson/visualizations";
 import { LessonOutline } from "@/components/lesson/lesson-outline";
 import { Confetti } from "@/components/confetti";
 import { useProgress } from "@/components/providers/progress-provider";
-import { adjacentLessons } from "@/lib/course-utils";
+import { adjacentLessons, courseLessonIds } from "@/lib/course-utils";
 import { isAuthored } from "@/data/lessons";
 
 function Section({
@@ -87,25 +89,72 @@ export function LessonView({ lesson, course }: { lesson: Lesson; course: Course 
     saveNote,
     notes,
     recordQuiz,
+    completedLessons,
   } = useProgress();
 
   const done = isComplete(lesson.id);
   const bookmarked = isBookmarked(lesson.id);
   const [note, setNote] = React.useState(notes[lesson.id] ?? "");
   const [celebrate, setCelebrate] = React.useState(false);
+  const [courseDone, setCourseDone] = React.useState(false);
   const { prev, next } = adjacentLessons(course, lesson.id);
 
   function handleComplete() {
+    // Did finishing THIS lesson just complete the whole course?
+    const ids = courseLessonIds(course);
+    const wasComplete = ids.every((id) => completedLessons.includes(id));
+    const nowComplete = ids.every((id) => id === lesson.id || completedLessons.includes(id));
+
     completeLesson(lesson.id, lesson.xp, lesson.minutes);
     if (!done) {
       setCelebrate(true);
       setTimeout(() => setCelebrate(false), 2500);
     }
+    if (nowComplete && !wasComplete) setCourseDone(true);
   }
 
   return (
     <div className="relative">
       {celebrate && <Confetti />}
+      {courseDone && <Confetti />}
+
+      {/* Course-completion celebration → prompt to download the certificate */}
+      {courseDone && (
+        <div
+          className="fixed inset-0 z-[90] grid place-items-center bg-black/50 p-4 backdrop-blur-sm"
+          onClick={() => setCourseDone(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", damping: 22, stiffness: 260 }}
+            className="w-full max-w-md rounded-3xl border border-border bg-card p-8 text-center shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-primary to-accent text-white">
+              <PartyPopper className="h-8 w-8" />
+            </span>
+            <h2 className="mt-4 text-2xl font-black">Course complete! 🎉</h2>
+            <p className="mt-2 text-muted-foreground">
+              You finished every lesson in <strong>{course.title}</strong>. You&apos;ve earned your
+              certificate — add your name and download it.
+            </p>
+            <div className="mt-6 flex flex-col gap-2">
+              <Button asChild size="lg" variant="gradient">
+                <Link href="/certificate">
+                  <Award className="h-5 w-5" /> Get my certificate
+                </Link>
+              </Button>
+              <button
+                onClick={() => setCourseDone(false)}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Keep exploring
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Breadcrumb + banner */}
       <div className={`bg-gradient-to-br ${course.gradient} py-8 text-white`}>

@@ -3,12 +3,14 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { Printer, CheckCircle2, Lock, Award } from "lucide-react";
+import Link from "next/link";
 import { courses } from "@/data/courses";
-import { courseProgress } from "@/lib/course-utils";
+import { courseProgress, nextLesson } from "@/lib/course-utils";
 import { useProgress } from "@/components/providers/progress-provider";
 import { Certificate } from "@/components/certificate/certificate";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Icon } from "@/components/icon";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +41,9 @@ export default function CertificatePage() {
   }, [completedLessons.length]);
 
   const selected = courses.find((c) => c.id === selectedId)!;
-  const selectedComplete = courseProgress(selected, completedLessons).percent === 100;
+  const selectedProg = courseProgress(selected, completedLessons);
+  const selectedComplete = selectedProg.percent === 100;
+  const selectedNext = nextLesson(selected, completedLessons);
 
   function commitName(v: string) {
     setName(v);
@@ -54,8 +58,8 @@ export default function CertificatePage() {
         </Badge>
         <h1 className="text-4xl font-black md:text-5xl">Claim your certificate</h1>
         <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-          Just type your name — that&apos;s it. Pick a course and your certificate is ready to print or
-          save as PDF. Finish 100% of a course to earn the official &ldquo;Verified&rdquo; seal.
+          Certificates are earned, not just claimed. Finish <strong>100%</strong> of a course, type
+          your name, and download it as a PDF — with an official &ldquo;Verified&rdquo; seal.
         </p>
       </motion.div>
 
@@ -113,22 +117,64 @@ export default function CertificatePage() {
             variant="gradient"
             size="lg"
             className="w-full"
-            disabled={!name.trim()}
+            disabled={!name.trim() || !selectedComplete}
             onClick={() => window.print()}
           >
-            <Printer className="h-5 w-5" /> Print / Save as PDF
+            {selectedComplete ? (
+              <>
+                <Printer className="h-5 w-5" /> Print / Save as PDF
+              </>
+            ) : (
+              <>
+                <Lock className="h-5 w-5" /> Complete the course to unlock
+              </>
+            )}
           </Button>
           {!selectedComplete && (
             <p className="text-center text-xs text-muted-foreground">
-              Tip: this course isn&apos;t finished yet — the certificate will say &ldquo;Self-issued&rdquo; until
-              you complete 100%.
+              You&apos;re at {selectedProg.percent}% — finish all {selectedProg.total} lessons of{" "}
+              {selected.title} to download this certificate.
             </p>
           )}
         </div>
 
-        {/* Live preview */}
-        <div>
-          <Certificate name={name} course={selected} dateStr={dateStr} verified={selectedComplete} />
+        {/* Live preview (locked until the course is 100% complete) */}
+        <div className="relative">
+          <div
+            className={cn(
+              !selectedComplete && "pointer-events-none select-none opacity-50 blur-[3px]"
+            )}
+          >
+            <Certificate name={name} course={selected} dateStr={dateStr} verified={selectedComplete} />
+          </div>
+
+          {!selectedComplete && (
+            <div className="absolute inset-0 grid place-items-center p-4 print:hidden">
+              <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 text-center shadow-lift">
+                <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-secondary text-muted-foreground">
+                  <Lock className="h-6 w-6" />
+                </span>
+                <h3 className="mt-3 text-lg font-bold">Certificate locked</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Finish <strong>{selected.title}</strong> to unlock it. You&apos;ve completed{" "}
+                  {selectedProg.done} of {selectedProg.total} lessons.
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <Progress value={selectedProg.percent} className="h-2" />
+                  <span className="shrink-0 text-xs font-semibold text-muted-foreground">
+                    {selectedProg.percent}%
+                  </span>
+                </div>
+                {selectedNext && (
+                  <Button asChild variant="gradient" className="mt-4 w-full">
+                    <Link href={`/learn/${selected.id}/${selectedNext.lesson.id}`}>
+                      {selectedProg.done > 0 ? "Continue course" : "Start course"}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
