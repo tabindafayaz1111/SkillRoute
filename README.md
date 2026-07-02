@@ -1,46 +1,52 @@
-# 🧠 ML Academy
+# 🧭 SkillRoute
 
-An interactive platform to learn **Machine Learning & Deep Learning** from absolute zero to
-industry-ready — built to be fun enough for a curious beginner and deep enough for a future expert.
+An interactive platform to learn **coding, data, and AI** — from absolute zero to job-ready.
+Fun enough for a curious beginner, deep enough for a future expert.
 
-Think *Duolingo + Brilliant + Kaggle Learn*, focused entirely on ML & DL: story-first lessons,
-live in-browser Python, an AI mentor, projects, and full gamification.
+Think *Duolingo + Brilliant + Kaggle Learn*, across **21 courses in 5 tracks**: story-first
+lessons, live in-browser code, a real AI mentor, projects, certificates, and full gamification.
+
+🔗 **Live:** https://skill-route-rho.vercel.app
+
+> 🧑‍🎓 **New to the code?** Read [`LEARN-THIS-CODEBASE.md`](./LEARN-THIS-CODEBASE.md) — a from-scratch,
+> beginner-friendly walkthrough of *what, how, and why* for the entire project.
 
 ---
 
-## ✨ What's built and working right now
+## 📚 The catalog — 21 courses across 5 tracks
 
-| Area | Status | Notes |
-|------|--------|-------|
-| **Premium homepage** | ✅ | Animated AI-particle hero, gradient design, data-driven course cards |
-| **Dashboard** | ✅ | XP/level, streak, coins, achievements, **learning heatmap**, 7-day study chart, daily/weekly challenges, continue-learning |
-| **Data-driven curriculum** | ✅ | ML + DL courses, modules, lessons — add a course object and it appears everywhere |
-| **Rich lesson engine** | ✅ | Story → problem → analogy → interactive visual → plain English → maths → runnable Python → exercise → quiz → flashcards → mini-project → industry use → common mistakes → interview Qs → papers → notes → cheat sheet |
-| **Live Python playground** | ✅ | Real CPython via **Pyodide** (WASM) + **Monaco** editor. NumPy / Pandas / scikit-learn. Run, reset, hint, solution, plain-English error explanations |
-| **Interactive widgets** | ✅ | Drag-slider linear-regression fit, neuron weight tuner, gradient-descent simulator, flip flashcards, animated quiz |
-| **AI Mentor** | ✅ | Floating Socratic tutor on every page (rule-based now; one function swap to a real Claude LLM) |
-| **Gamification** | ✅ | XP, levels, coins, streaks, badges/achievements, confetti, leaderboard with you ranked in |
-| **Research / History of AI** | ✅ | Animated timeline (1958 → ChatGPT) + landmark papers |
-| **Dark / light theme** | ✅ | System-aware, persisted |
-| **Responsive + accessible** | ✅ | Mobile-first, keyboard-focus rings, ARIA roles, semantic HTML |
-| **Notes & bookmarks** | ✅ | Per-lesson notes + bookmarks, saved locally |
+| Track | Courses |
+|---|---|
+| **AI & Machine Learning** | Machine Learning · Deep Learning |
+| **AI Engineering & Tools** | Python for Data Science · LLM & Generative AI Engineering · Git & GitHub · Computer Graphics |
+| **Programming Languages** | Python · JavaScript · C++ · Java |
+| **Web & Full-Stack** | Full-Stack Web Dev · React · Node.js · Spring Boot · Django |
+| **Data & Analytics** | SQL · Statistics · Linear Algebra · Excel · Power BI · Tableau |
 
-Everything runs with **zero backend config** — progress persists to `localStorage` so you can try
-the full experience immediately.
+Every lesson is authored to teach a **non-technical beginner**: story → analogy → plain-English →
+maths → runnable code → exercise → quiz → flashcards → mini-project → industry use → common
+mistakes → interview questions → cheat sheet.
 
-## 🧭 Honest scope note
+## ✨ Features
 
-The original brief lists *hundreds* of features and a complete multi-hundred-lesson curriculum —
-realistically a team-months effort. This repository is a **production-structured, fully runnable
-foundation** that implements the core platform end-to-end and is architected so the rest plugs in
-cleanly:
+| Area | Notes |
+|------|-------|
+| **Premium homepage** | Animated AI-particle hero, personalized *Continue Learning* card, featured courses, light/dark |
+| **Catalog** | 21 courses grouped by category with quick-nav |
+| **Rich lesson engine** | The full teaching flow above, plus a sticky course outline with completion ticks |
+| **Live code playground** | Real CPython via **Pyodide** (WASM) + **Monaco** editor; run, reset, hints, solutions, friendly error explanations |
+| **AI Mentor** | Floating tutor on every page — **real Claude** when an API key is set, with a helpful offline fallback otherwise |
+| **⌘K global search** | Command palette across all courses & lessons, full keyboard nav |
+| **Certificates** | Name-only, printable / save-as-PDF, with a "Verified" seal at 100% completion |
+| **Dashboard** | XP/level, streak, coins, achievements, learning heatmap, 7-day study chart, challenges |
+| **Gamification** | XP, levels, coins, streaks, badges, confetti, leaderboard with you ranked in |
+| **Research** | Animated *History of AI* timeline (1958 → ChatGPT) + landmark papers |
+| **Interactive widgets** | Drag-to-fit regression, neuron tuner, gradient-descent sim, flip flashcards, animated quizzes |
+| **Theme + a11y** | System-aware dark/light (premium light mode), keyboard focus rings, ARIA roles |
+| **Notes & bookmarks** | Per-lesson, saved locally |
 
-- **3 lessons are authored in full depth** (`what-is-ml`, `linear-regression`, `what-is-a-neuron`).
-- **Every other lesson in the outline renders** via a structured fallback template (clearly badged
-  "Structured preview") instead of 404-ing. Authoring a new lesson = add one object to
-  `src/data/lessons.ts`; no component changes.
-- **Clerk & Supabase** are wired conceptually (see below) but the app runs on a local store so it
-  works offline with no keys.
+Everything runs with **zero backend config** — progress persists to `localStorage`, so the full
+experience works immediately with no keys or database.
 
 ## 🚀 Getting started
 
@@ -50,64 +56,66 @@ npm run dev      # http://localhost:3000
 npm run build    # production build
 ```
 
-Requires Node 18+.
+Requires **Node 18+**.
 
 ## 🏗️ Architecture
 
 ```
 src/
-├── app/                      # Next.js App Router
-│   ├── page.tsx              # Homepage
-│   ├── dashboard/            # Learner dashboard
-│   ├── courses/[courseId]/   # Course outline (dynamic)
-│   ├── learn/[courseId]/[lessonId]/   # Lesson experience (dynamic)
-│   ├── playground/           # Standalone Python playground
-│   ├── research/             # History of AI
-│   └── leaderboard/
+├── app/                    # pages (App Router) + the /api/mentor route
 ├── components/
-│   ├── ui/                   # Design system (Button, Card, Badge, Progress, Tabs…)
-│   ├── layout/               # Navbar, Footer, ThemeToggle
-│   ├── home/                 # Hero particles, CourseCard
-│   ├── dashboard/            # Heatmap, StudyChart
-│   ├── lesson/               # LessonView, Quiz, Flashcards, Visualizations
-│   ├── playground/           # Monaco + Pyodide PythonEditor
-│   ├── mentor/               # AI Mentor widget
-│   └── providers/            # Theme + Progress/gamification store
-├── data/                     # courses, lessons, achievements, research (the "CMS")
-├── hooks/                    # usePyodide
-├── lib/                      # utils, course math, mentor brain, error explainer
-└── types/                    # Shared TypeScript models
+│   ├── ui/                 # design system: Button, Card, Badge, Progress, Tabs…
+│   ├── layout/             # Navbar, Footer, ThemeToggle
+│   ├── home/               # hero particles, CourseCard, ContinueLearning
+│   ├── dashboard/          # Heatmap, StudyChart
+│   ├── lesson/             # LessonView, Quiz, Flashcards, Visualizations, LessonOutline
+│   ├── playground/         # Monaco + Pyodide editor
+│   ├── mentor/             # AI Mentor widget
+│   ├── search/             # ⌘K command palette
+│   ├── certificate/        # printable certificate
+│   └── providers/          # Theme + Progress/gamification store
+├── data/                   # THE CONTENT: courses/, lessons/, achievements, research
+├── hooks/                  # usePyodide
+├── lib/                    # utils, course maths, mentor client, error explainer
+└── types/                  # shared TypeScript models
 ```
 
 **Design principle:** content lives in `src/data/*` and drives every screen. The UI never hard-codes
 a course or lesson, so the platform scales to unlimited courses without touching components.
 
-## 🔌 Wiring up Clerk + Supabase (optional, for real accounts & cross-device sync)
+## 🤖 Turn on the real AI Mentor
 
-The learner store (`src/components/providers/progress-provider.tsx`) exposes a clean API
-(`completeLesson`, `addXp`, `toggleBookmark`, …). To go multi-device:
+The mentor works offline out of the box. To upgrade it to a live **Claude** tutor:
+
+1. Create a key at **console.anthropic.com**.
+2. Add `ANTHROPIC_API_KEY=...` to `.env.local` (local) **or** Vercel → Project Settings →
+   Environment Variables (production).
+3. Redeploy. No code changes needed — `src/app/api/mentor/route.ts` picks it up automatically.
+   Model is set there (default `claude-haiku-4-5`).
+
+## 🔌 Real accounts & cross-device sync (optional)
+
+Progress currently lives in `localStorage`. To go multi-device with **Clerk + Supabase**:
 
 1. `npm install @clerk/nextjs @supabase/supabase-js`
-2. Copy `.env.example` → `.env.local` and fill in the keys.
+2. Fill the keys in `.env.local` (see `.env.example`).
 3. Wrap `src/app/layout.tsx` in `<ClerkProvider>` and add `middleware.ts`.
-4. In the progress provider, replace the `localStorage` `load`/`persist` calls with Supabase reads
-   /writes keyed on the Clerk `userId`. **The public API and every component stay identical.**
+4. In `src/components/providers/progress-provider.tsx`, replace the `localStorage` load/save with
+   Supabase reads/writes keyed on the Clerk `userId`. **The `useProgress()` API and every component
+   stay identical.**
 
-Suggested Supabase tables: `profiles`, `lesson_progress`, `quiz_scores`, `activity`. A view ordered
-by `xp` powers the leaderboard.
-
-## 🤖 Upgrading the AI Mentor to a real LLM
-
-`src/lib/mentor.ts` has a single `askMentor(question, history)` function (rule-based today).
-Replace its body with a `fetch("/api/mentor")` call to a route handler that uses the Anthropic SDK
-(recommended model: `claude-opus-4-8`, or `claude-sonnet-5` for lower latency). Keep the signature
-and the chat UI won't change. The system prompt should enforce the mentor rule: *guide with a
-question first, reveal step by step — never dump the answer.*
+Suggested tables: `profiles`, `lesson_progress`, `quiz_scores`, `activity`; a view ordered by `xp`
+powers the leaderboard.
 
 ## 🎨 Tech stack
 
 Next.js 14 · React 18 · TypeScript · Tailwind CSS · Framer Motion · shadcn-style components ·
-Lucide icons · Recharts · Monaco Editor · Pyodide · next-themes.
+Lucide icons · Recharts · Monaco Editor · Pyodide · next-themes · Anthropic SDK.
+
+## ☁️ Deployment
+
+Hosted on **Vercel** — every push to `main` triggers an automatic build & deploy. No config needed
+(Next.js is auto-detected).
 
 ---
 
