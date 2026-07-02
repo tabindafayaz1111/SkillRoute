@@ -1,4 +1,4 @@
-import type { Lesson, LessonMeta, LessonBody } from "@/types";
+﻿import type { Lesson, LessonMeta, LessonBody } from "@/types";
 import { courses } from "./courses";
 import { foundations } from "./lessons/foundations";
 import { dataStats } from "./lessons/data-stats";
@@ -7,10 +7,29 @@ import { shipping } from "./lessons/shipping";
 import { neural } from "./lessons/neural";
 import { visionSequences } from "./lessons/vision-sequences";
 import { genai } from "./lessons/genai";
+import { dataSciencePython } from "./lessons/data-science-python";
+import { statistics } from "./lessons/statistics";
+import { pythonProgramming } from "./lessons/python-programming";
+import { javascript } from "./lessons/javascript";
+import { react } from "./lessons/react";
+import { nodejs } from "./lessons/nodejs";
+import { cpp } from "./lessons/cpp";
+import { fullstack } from "./lessons/fullstack";
+import { java } from "./lessons/java";
+import { django } from "./lessons/django";
+import { springBoot } from "./lessons/spring-boot";
+import { sql } from "./lessons/sql";
+import { linearAlgebra } from "./lessons/linear-algebra";
+import { excel } from "./lessons/excel";
+import { powerBi } from "./lessons/power-bi";
+import { tableau } from "./lessons/tableau";
+import { genaiLlm } from "./lessons/genai-llm";
+import { git } from "./lessons/git";
+import { computerGraphics } from "./lessons/computer-graphics";
 
 /**
  * Hand-authored, full lessons. Not every lesson in the outline is written to
- * this depth yet — `getLesson` falls back to a structured template so every
+ * this depth yet â€” `getLesson` falls back to a structured template so every
  * route renders real, useful scaffolding instead of a 404. Authoring a new
  * lesson = add an entry here; nothing else changes.
  */
@@ -18,28 +37,28 @@ import { genai } from "./lessons/genai";
 const core: Record<string, LessonBody> = {
   "what-is-ml": {
     story:
-      "Imagine you run a tiny bakery. Every morning you guess how many loaves to bake. Bake too few and customers leave angry; too many and they go stale. After years, your gut 'just knows' — rainy Mondays are slow, sunny weekends are chaos. Machine Learning is teaching a computer to build that same gut feeling from data, instead of you writing down every rule by hand.",
+      "Imagine you run a tiny bakery. Every morning you guess how many loaves to bake. Bake too few and customers leave angry; too many and they go stale. After years, your gut 'just knows' â€” rainy Mondays are slow, sunny weekends are chaos. Machine Learning is teaching a computer to build that same gut feeling from data, instead of you writing down every rule by hand.",
     problem:
       "Traditional programming means writing explicit rules: `if raining and monday: bake 20`. But real life has thousands of subtle patterns no human can enumerate. How do we handle problems too messy for hand-written rules?",
     analogy:
       "Normal code is a recipe you write. Machine Learning is a student you train: you show it examples, it figures out the recipe itself.",
     explanation: [
-      "Machine Learning flips programming around. Instead of Rules + Data → Answers, you give the machine Data + Answers → Rules.",
+      "Machine Learning flips programming around. Instead of Rules + Data â†’ Answers, you give the machine Data + Answers â†’ Rules.",
       "You feed it examples (yesterday's weather + how many loaves sold), and it discovers the pattern connecting inputs to outputs.",
-      "Once trained, it can predict tomorrow's demand from tomorrow's forecast — even for weather combinations it never saw exactly.",
+      "Once trained, it can predict tomorrow's demand from tomorrow's forecast â€” even for weather combinations it never saw exactly.",
       "There are three big families: Supervised (learn from labelled examples), Unsupervised (find hidden groups), and Reinforcement (learn by trial, reward, and error).",
     ],
     visualization: { type: "linear-regression" },
-    math: "Prediction: ŷ = f(x). Learning means finding the function f that makes ŷ closest to the real answers y across all your examples.",
+    math: "Prediction: Å· = f(x). Learning means finding the function f that makes Å· closest to the real answers y across all your examples.",
     code: {
       language: "python",
       source: `# Your first "model": predicting bakery demand
-# (Just averages for now — real models find smarter patterns)
+# (Just averages for now â€” real models find smarter patterns)
 sales = [20, 22, 19, 40, 45, 21, 20]   # last 7 days
 prediction = sum(sales) / len(sales)
 print(f"Bake about {round(prediction)} loaves tomorrow")`,
       explanation:
-        "This naive model just predicts the average. It's technically 'machine learning-ish' — it learned one number from data. Real models learn far richer functions, but the loop is the same: look at data, produce a prediction.",
+        "This naive model just predicts the average. It's technically 'machine learning-ish' â€” it learned one number from data. Real models learn far richer functions, but the loop is the same: look at data, produce a prediction.",
     },
     exercise: {
       prompt: "Change the model to predict using only the last 3 days (recent trend matters more).",
@@ -65,7 +84,7 @@ print(prediction)`,
           "Traditional code = you write the rules. ML = the machine infers the rules from examples.",
       },
       {
-        question: "Learning from labelled examples (input → correct answer) is called…",
+        question: "Learning from labelled examples (input â†’ correct answer) is calledâ€¦",
         options: ["Unsupervised learning", "Reinforcement learning", "Supervised learning", "Deep learning"],
         answerIndex: 2,
         explanation: "Labelled data (you know the right answers) is supervised learning.",
@@ -78,7 +97,7 @@ print(prediction)`,
     ],
     miniProject: {
       title: "Weekend Weather Mood Predictor",
-      brief: "Collect a week of your own mood (1–10) and the weather, then predict your weekend mood.",
+      brief: "Collect a week of your own mood (1â€“10) and the weather, then predict your weekend mood.",
       steps: [
         "Log mood + weather for 7 days in a Python list of dicts.",
         "Compute average mood for sunny vs rainy days.",
@@ -92,8 +111,8 @@ print(prediction)`,
       "Hospitals triaging X-rays to spot urgent cases first",
     ],
     commonMistakes: [
-      "Thinking ML is magic — it's just pattern-finding, and garbage data gives garbage predictions.",
-      "Judging a model on data it already saw (that's cheating — see the train/test lesson).",
+      "Thinking ML is magic â€” it's just pattern-finding, and garbage data gives garbage predictions.",
+      "Judging a model on data it already saw (that's cheating â€” see the train/test lesson).",
     ],
     interviewQuestions: [
       "Explain the difference between supervised and unsupervised learning with an example.",
@@ -104,28 +123,28 @@ print(prediction)`,
     ],
     nextUp: ["python-variables", "train-test-split"],
     cheatsheet: [
-      "Rules + Data → Answers = normal code",
-      "Data + Answers → Rules = machine learning",
-      "3 families: Supervised · Unsupervised · Reinforcement",
+      "Rules + Data â†’ Answers = normal code",
+      "Data + Answers â†’ Rules = machine learning",
+      "3 families: Supervised Â· Unsupervised Â· Reinforcement",
       "More/cleaner data usually beats a fancier algorithm",
     ],
   },
 
   "linear-regression": {
     story:
-      "A friend asks: 'I'm about to add a 3rd bedroom — how much will my house be worth?' You don't guess randomly. You picture houses you know: bigger ones cost more, roughly along a straight line. You're mentally fitting a line through points. That line is linear regression.",
+      "A friend asks: 'I'm about to add a 3rd bedroom â€” how much will my house be worth?' You don't guess randomly. You picture houses you know: bigger ones cost more, roughly along a straight line. You're mentally fitting a line through points. That line is linear regression.",
     problem:
-      "Given past data (house size → price), can we draw the single 'best' straight line so we can predict the price of a house we've never seen?",
+      "Given past data (house size â†’ price), can we draw the single 'best' straight line so we can predict the price of a house we've never seen?",
     analogy:
       "It's like laying a taut piece of string through a scatter of dots so the string sits as close as possible to all of them at once.",
     explanation: [
-      "We model price as: price = w · size + b. `w` is the slope (₹ per extra sq-ft), `b` is the base price.",
+      "We model price as: price = w Â· size + b. `w` is the slope (â‚¹ per extra sq-ft), `b` is the base price.",
       "'Best' line = the one where the total squared vertical distance from points to the line is smallest. That total is the loss (Mean Squared Error).",
-      "We start with a random line, measure the loss, then nudge w and b to shrink it — that nudging is gradient descent (next lesson).",
+      "We start with a random line, measure the loss, then nudge w and b to shrink it â€” that nudging is gradient descent (next lesson).",
       "Linear regression is the 'hello world' of ML: simple, interpretable, and shockingly effective as a baseline.",
     ],
     visualization: { type: "linear-regression" },
-    math: "Loss (MSE) = (1/n) Σ (yᵢ − (w·xᵢ + b))². We pick w, b to minimize this.",
+    math: "Loss (MSE) = (1/n) Î£ (yáµ¢ âˆ’ (wÂ·xáµ¢ + b))Â². We pick w, b to minimize this.",
     code: {
       language: "python",
       source: `import numpy as np
@@ -151,10 +170,10 @@ print(round(price, 1))`,
     },
     quiz: [
       {
-        question: "In price = w·size + b, what does w represent?",
+        question: "In price = wÂ·size + b, what does w represent?",
         options: ["The base price", "The price change per extra sq-ft", "The error", "The number of houses"],
         answerIndex: 1,
-        explanation: "w is the slope — how much price moves for each unit of size.",
+        explanation: "w is the slope â€” how much price moves for each unit of size.",
       },
       {
         question: "Why do we square the errors in MSE instead of just adding them?",
@@ -171,12 +190,12 @@ print(round(price, 1))`,
     ],
     flashcards: [
       { front: "Linear regression", back: "Fitting the best straight line (y = wx + b) to predict a continuous value." },
-      { front: "MSE", back: "Mean Squared Error — average of squared gaps between predictions and truth." },
+      { front: "MSE", back: "Mean Squared Error â€” average of squared gaps between predictions and truth." },
       { front: "Coefficient (w)", back: "The slope: how much output changes per unit of input." },
     ],
     miniProject: {
       title: "Predict Your City's Coffee Price",
-      brief: "Fit a line from cafe size → coffee price using data you collect.",
+      brief: "Fit a line from cafe size â†’ coffee price using data you collect.",
       steps: [
         "Note price + a feature (seats, or distance from centre) for 8 cafes.",
         "Fit LinearRegression.",
@@ -190,7 +209,7 @@ print(round(price, 1))`,
       "Finance modelling risk factors as linear drivers",
     ],
     commonMistakes: [
-      "Assuming a straight line fits everything — many relationships curve (use polynomial/other models).",
+      "Assuming a straight line fits everything â€” many relationships curve (use polynomial/other models).",
       "Forgetting to scale features when combining size (1000s) with, say, bedrooms (single digits).",
     ],
     interviewQuestions: [
@@ -203,29 +222,29 @@ print(round(price, 1))`,
     ],
     nextUp: ["gradient-descent", "classification"],
     cheatsheet: [
-      "Model: y = w·x + b",
+      "Model: y = wÂ·x + b",
       "Loss: Mean Squared Error",
       "Best line = smallest MSE",
       "sklearn: LinearRegression().fit(X, y).predict(Xnew)",
-      "Great interpretable baseline — always try it first",
+      "Great interpretable baseline â€” always try it first",
     ],
   },
 
   "what-is-a-neuron": {
     story:
-      "You decide whether to go for a run. You weigh things: Is it raining? (heavily against) Did I sleep well? (for) Do I have time? (for). You mentally add up these weighted votes, and if the total crosses your personal 'meh, fine' threshold — you run. An artificial neuron does exactly this arithmetic.",
+      "You decide whether to go for a run. You weigh things: Is it raining? (heavily against) Did I sleep well? (for) Do I have time? (for). You mentally add up these weighted votes, and if the total crosses your personal 'meh, fine' threshold â€” you run. An artificial neuron does exactly this arithmetic.",
     problem:
-      "How can we build the smallest possible unit that takes several inputs, forms an opinion, and passes it on — so we can stack millions of them into a brain-like network?",
+      "How can we build the smallest possible unit that takes several inputs, forms an opinion, and passes it on â€” so we can stack millions of them into a brain-like network?",
     analogy:
       "A neuron is a tiny voting booth: each input gets a weight (how much its vote counts), the votes are summed, and a decision function decides whether to 'fire'.",
     explanation: [
-      "A neuron takes inputs x₁…xₙ, multiplies each by a weight wᵢ (importance), and adds them up with a bias b (a baseline nudge).",
-      "That sum z = w·x + b is squashed by an activation function (like sigmoid or ReLU) to introduce a decision/non-linearity.",
+      "A neuron takes inputs xâ‚â€¦xâ‚™, multiplies each by a weight wáµ¢ (importance), and adds them up with a bias b (a baseline nudge).",
+      "That sum z = wÂ·x + b is squashed by an activation function (like sigmoid or ReLU) to introduce a decision/non-linearity.",
       "Learning = adjusting the weights so the neuron's output matches reality. Millions of these, wired in layers, become a neural network.",
       "One neuron is basically logistic regression. The magic is stacking them: layers of neurons can represent astonishingly complex patterns.",
     ],
     visualization: { type: "neuron" },
-    math: "output = activation(Σ wᵢxᵢ + b). With sigmoid: σ(z) = 1 / (1 + e^(−z)), squashing any number into (0, 1).",
+    math: "output = activation(Î£ wáµ¢xáµ¢ + b). With sigmoid: Ïƒ(z) = 1 / (1 + e^(âˆ’z)), squashing any number into (0, 1).",
     code: {
       language: "python",
       source: `import numpy as np
@@ -241,7 +260,7 @@ bias    = -0.5
 z = np.dot(inputs, weights) + bias
 print("Confidence to run:", round(float(sigmoid(z)), 3))`,
       explanation:
-        "The dot product is the weighted vote. Sigmoid turns the raw score into a 0–1 'confidence'. Negative weight on rain means rain lowers the score.",
+        "The dot product is the weighted vote. Sigmoid turns the raw score into a 0â€“1 'confidence'. Negative weight on rain means rain lowers the score.",
     },
     exercise: {
       prompt: "Make 'sleep' matter twice as much by changing its weight, and see how confidence shifts.",
@@ -269,7 +288,7 @@ print(round(float(sigmoid(z)), 3))`,
         ],
         answerIndex: 1,
         explanation:
-          "Without non-linear activations, stacking layers collapses into a single linear function — no extra power.",
+          "Without non-linear activations, stacking layers collapses into a single linear function â€” no extra power.",
       },
     ],
     flashcards: [
@@ -284,7 +303,7 @@ print(round(float(sigmoid(z)), 3))`,
         "Write the sigmoid neuron function.",
         "Test all 4 input combos of (0/1, 0/1).",
         "Adjust weights + bias until it only fires for (1,1).",
-        "Try to make an OR gate — what changed?",
+        "Try to make an OR gate â€” what changed?",
       ],
     },
     industryUse: [
@@ -293,7 +312,7 @@ print(round(float(sigmoid(z)), 3))`,
       "Edge devices running tiny neural nets for keyword spotting",
     ],
     commonMistakes: [
-      "Forgetting the bias — it lets the neuron shift its decision boundary off the origin.",
+      "Forgetting the bias â€” it lets the neuron shift its decision boundary off the origin.",
       "Using no activation (or only linear ones) and wondering why depth doesn't help.",
     ],
     interviewQuestions: [
@@ -305,9 +324,9 @@ print(round(float(sigmoid(z)), 3))`,
     ],
     nextUp: ["forward-pass", "backprop"],
     cheatsheet: [
-      "z = Σ wᵢxᵢ + b",
+      "z = Î£ wáµ¢xáµ¢ + b",
       "output = activation(z)",
-      "1 neuron ≈ logistic regression",
+      "1 neuron â‰ˆ logistic regression",
       "Non-linear activation is what makes depth powerful",
       "Learning = adjusting weights & bias",
     ],
@@ -327,6 +346,25 @@ const authored: Record<string, LessonBody> = {
   ...neural,
   ...visionSequences,
   ...genai,
+  ...cpp,
+  ...dataSciencePython,
+  ...statistics,
+  ...react,
+  ...nodejs,
+  ...pythonProgramming,
+  ...javascript,
+  ...fullstack,
+  ...java,
+  ...django,
+  ...springBoot,
+  ...sql,
+  ...linearAlgebra,
+  ...excel,
+  ...powerBi,
+  ...tableau,
+  ...genaiLlm,
+  ...git,
+  ...computerGraphics,
 };
 
 /** Build a structured fallback so unlisted lessons still render usefully. */
@@ -335,11 +373,11 @@ function buildFallback(meta: LessonMeta, courseId: string, moduleId: string): Le
     ...meta,
     courseId,
     moduleId,
-    story: `Every big idea in ML started as someone's very real, very human problem. "${meta.title}" is no exception — and we'll meet it through a story before a single formula.`,
+    story: `Every big idea in ML started as someone's very real, very human problem. "${meta.title}" is no exception â€” and we'll meet it through a story before a single formula.`,
     problem: `We'll frame exactly which problem "${meta.title}" solves, and why earlier tools fell short.`,
     analogy: "We reach for an everyday analogy first, so the concept clicks before the notation does.",
     explanation: [
-      "Visual intuition first — a picture you can hold in your head.",
+      "Visual intuition first â€” a picture you can hold in your head.",
       "Then the plain-English 'why it works'.",
       "Then the maths, introduced only once the intuition is solid.",
       "Finally the professional view: when to use it, when not to, and how it's used in industry.",
@@ -347,7 +385,7 @@ function buildFallback(meta: LessonMeta, courseId: string, moduleId: string): Le
     math: "The precise formulation is introduced step by step, each symbol tied back to the story.",
     code: {
       language: "python",
-      source: `# Runnable example for "${meta.title}"\nprint("This lesson's interactive code runs in the playground →")`,
+      source: `# Runnable example for "${meta.title}"\nprint("This lesson's interactive code runs in the playground â†’")`,
       explanation: "Every concept lesson pairs with runnable code you can edit and execute in the browser.",
     },
     quiz: [
@@ -364,14 +402,14 @@ function buildFallback(meta: LessonMeta, courseId: string, moduleId: string): Le
       },
     ],
     flashcards: [
-      { front: meta.title, back: "Full flashcards are authored per lesson — this one is on the roadmap." },
+      { front: meta.title, back: "Full flashcards are authored per lesson â€” this one is on the roadmap." },
     ],
-    industryUse: ["Applied across real production ML systems — full case studies coming per lesson."],
-    commonMistakes: ["Rushing to code before building visual intuition — this platform deliberately slows that down."],
+    industryUse: ["Applied across real production ML systems â€” full case studies coming per lesson."],
+    commonMistakes: ["Rushing to code before building visual intuition â€” this platform deliberately slows that down."],
     interviewQuestions: [`Explain "${meta.title}" to a non-technical interviewer in 60 seconds.`],
     papers: [],
     nextUp: [],
-    cheatsheet: [`${meta.title}: story → picture → maths → code → project.`],
+    cheatsheet: [`${meta.title}: story â†’ picture â†’ maths â†’ code â†’ project.`],
   };
 }
 
