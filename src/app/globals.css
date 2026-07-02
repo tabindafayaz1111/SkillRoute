@@ -9,17 +9,17 @@
     --foreground: 224 24% 12%;
     --card: 0 0% 100%;
     --card-foreground: 224 24% 12%;
-    --primary: 245 74% 58%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 38 92% 48%;
+    --primary-foreground: 222 47% 11%;
     --secondary: 220 26% 94%;
     --secondary-foreground: 224 22% 18%;
     --muted: 220 26% 95%;
     --muted-foreground: 222 12% 42%;
-    --accent: 12 88% 61%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 40 92% 50%;
+    --accent-foreground: 222 47% 11%;
     --border: 220 22% 89%;
     --input: 220 22% 89%;
-    --ring: 245 74% 58%;
+    --ring: 38 92% 48%;
     --success: 142 71% 40%;
     --warning: 32 95% 44%;
     --danger: 0 78% 55%;
@@ -33,45 +33,31 @@
   }
 
   .dark {
-    --background: 240 14% 6%;
-    --foreground: 240 10% 96%;
-    --card: 240 12% 9%;
-    --card-foreground: 240 10% 96%;
-    --primary: 245 82% 68%;
-    --primary-foreground: 240 14% 6%;
-    --secondary: 240 8% 15%;
-    --secondary-foreground: 240 10% 92%;
-    --muted: 240 8% 14%;
-    --muted-foreground: 240 5% 62%;
-    --accent: 12 94% 66%;
-    --accent-foreground: 240 14% 6%;
-    --border: 240 8% 18%;
-    --input: 240 8% 18%;
-    --ring: 245 82% 68%;
+    /* Palette: #0B1120 bg · #1E293B card · #F59E0B primary · #FFD166 accent · #FFF text */
+    --background: 222 49% 8%;
+    --foreground: 0 0% 100%;
+    --card: 217 33% 17%;
+    --card-foreground: 0 0% 100%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 30% 22%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 217 30% 20%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 42 100% 70%;
+    --accent-foreground: 222 47% 11%;
+    --border: 217 26% 27%;
+    --input: 217 26% 27%;
+    --ring: 38 92% 50%;
     --success: 142 64% 52%;
     --warning: 38 92% 55%;
     --danger: 0 72% 60%;
-    --shadow-color: 240 60% 2%;
+    --shadow-color: 222 60% 2%;
     --shadow-soft: 0 1px 2px hsl(var(--shadow-color) / 0.4),
       0 8px 30px -10px hsl(var(--shadow-color) / 0.6);
     --shadow-lift: 0 2px 6px hsl(var(--shadow-color) / 0.4),
       0 30px 60px -18px hsl(var(--shadow-color) / 0.7);
   }
-
-  /* ── Switchable brand palettes (set data-palette on <html>) ──────────── */
-  /* Default (no attribute) = Indigo & Coral. Each block overrides only the
-     two brand colors + ring, for light and dark. */
-  [data-palette="indigo"] { --primary: 245 74% 58%; --accent: 12 88% 61%; --ring: 245 74% 58%; }
-  .dark[data-palette="indigo"] { --primary: 245 82% 68%; --accent: 12 94% 66%; --ring: 245 82% 68%; }
-
-  [data-palette="emerald"] { --primary: 160 84% 32%; --accent: 38 95% 47%; --ring: 160 84% 32%; }
-  .dark[data-palette="emerald"] { --primary: 158 72% 45%; --accent: 40 96% 56%; --ring: 158 72% 45%; }
-
-  [data-palette="cobalt"] { --primary: 224 82% 53%; --accent: 347 82% 55%; --ring: 224 82% 53%; }
-  .dark[data-palette="cobalt"] { --primary: 222 90% 65%; --accent: 350 92% 64%; --ring: 222 90% 65%; }
-
-  [data-palette="teal"] { --primary: 178 76% 33%; --accent: 22 92% 50%; --ring: 178 76% 33%; }
-  .dark[data-palette="teal"] { --primary: 176 68% 45%; --accent: 24 95% 57%; --ring: 176 68% 45%; }
 
   * {
     @apply border-border;

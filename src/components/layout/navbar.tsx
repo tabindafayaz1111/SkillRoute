@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
-import { PaletteSwitcher } from "./palette-switcher";
 import { useProgress } from "@/components/providers/progress-provider";
 import { Badge } from "@/components/ui/badge";
 import { CommandPalette } from "@/components/search/command-palette";
@@ -104,7 +103,6 @@ export function Navbar() {
             {xp} XP
           </Badge>
 
-          <PaletteSwitcher />
           <ThemeToggle />
 
           <Link
