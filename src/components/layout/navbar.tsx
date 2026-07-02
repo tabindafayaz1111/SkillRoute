@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { useProgress } from "@/components/providers/progress-provider";
 import { Badge } from "@/components/ui/badge";
+import { CommandPalette } from "@/components/search/command-palette";
 
 const links = [
   { href: "/courses", label: "Courses", icon: BookOpen },
@@ -29,9 +31,11 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const { xp, level, streakDays } = useProgress();
+  const [searchOpen, setSearchOpen] = React.useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/70 backdrop-blur-xl">
+      <CommandPalette open={searchOpen} onOpenChange={setSearchOpen} />
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <motion.span
@@ -69,12 +73,20 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           <button
-            className="hidden items-center gap-2 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground lg:flex"
+            onClick={() => setSearchOpen(true)}
+            className="hidden items-center gap-2 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground lg:flex"
             aria-label="Search"
           >
             <Search className="h-4 w-4" />
             <span>Search…</span>
             <kbd className="rounded bg-background px-1.5 text-xs">⌘K</kbd>
+          </button>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
+            aria-label="Search"
+          >
+            <Search className="h-5 w-5" />
           </button>
 
           <Badge variant="warning" className="gap-1">

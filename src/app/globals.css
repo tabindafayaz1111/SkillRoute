@@ -4,25 +4,32 @@
 
 @layer base {
   :root {
-    --background: 240 20% 99%;
-    --foreground: 240 10% 8%;
+    /* Light theme — soft, warm-neutral surfaces with depth (not flat white). */
+    --background: 220 40% 98%;
+    --foreground: 224 24% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 224 24% 12%;
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 6% 95%;
-    --secondary-foreground: 240 10% 12%;
-    --muted: 240 6% 95%;
-    --muted-foreground: 240 4% 42%;
-    --accent: 199 89% 48%;
+    --secondary: 220 26% 94%;
+    --secondary-foreground: 224 22% 18%;
+    --muted: 220 26% 95%;
+    --muted-foreground: 222 12% 42%;
+    --accent: 199 89% 45%;
     --accent-foreground: 0 0% 100%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
+    --border: 220 22% 89%;
+    --input: 220 22% 89%;
     --ring: 262 83% 58%;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
-    --danger: 0 84% 60%;
+    --success: 142 71% 40%;
+    --warning: 32 95% 44%;
+    --danger: 0 78% 55%;
     --radius: 0.9rem;
+    /* Soft, layered shadows tuned for a light surface. */
+    --shadow-color: 224 40% 30%;
+    --shadow-soft: 0 1px 2px hsl(var(--shadow-color) / 0.06),
+      0 8px 24px -8px hsl(var(--shadow-color) / 0.12);
+    --shadow-lift: 0 2px 4px hsl(var(--shadow-color) / 0.05),
+      0 24px 48px -16px hsl(var(--shadow-color) / 0.22);
   }
 
   .dark {
@@ -44,6 +51,11 @@
     --success: 142 64% 52%;
     --warning: 38 92% 55%;
     --danger: 0 72% 60%;
+    --shadow-color: 240 60% 2%;
+    --shadow-soft: 0 1px 2px hsl(var(--shadow-color) / 0.4),
+      0 8px 30px -10px hsl(var(--shadow-color) / 0.6);
+    --shadow-lift: 0 2px 6px hsl(var(--shadow-color) / 0.4),
+      0 30px 60px -18px hsl(var(--shadow-color) / 0.7);
   }
 
   * {
@@ -51,7 +63,13 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background-color: hsl(var(--background));
+    /* Subtle brand-tinted depth in both themes. */
+    background-image:
+      radial-gradient(1100px 560px at 100% -8%, hsl(var(--primary) / 0.07), transparent 60%),
+      radial-gradient(900px 480px at -8% 6%, hsl(var(--accent) / 0.06), transparent 55%);
+    background-attachment: fixed;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -62,15 +80,27 @@
 
 @layer components {
   .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25)];
+    background-color: hsl(var(--card) / 0.72);
+    border: 1px solid hsl(var(--border) / 0.7);
+    box-shadow: var(--shadow-lift);
+    @apply backdrop-blur-xl;
   }
 
   .gradient-text {
     @apply bg-gradient-to-r from-primary via-fuchsia-500 to-accent bg-clip-text text-transparent;
   }
 
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl;
+    box-shadow: var(--shadow-soft);
+    @apply transition-all duration-300;
+  }
+  .card-hover:hover {
+    box-shadow: var(--shadow-lift);
+    @apply -translate-y-1;
   }
 }
 

@@ -36,6 +36,7 @@ import { PythonEditor } from "@/components/playground/python-editor";
 import { Quiz } from "@/components/lesson/quiz";
 import { Flashcards } from "@/components/lesson/flashcards";
 import { Visualization } from "@/components/lesson/visualizations";
+import { LessonOutline } from "@/components/lesson/lesson-outline";
 import { Confetti } from "@/components/confetti";
 import { useProgress } from "@/components/providers/progress-provider";
 import { adjacentLessons } from "@/lib/course-utils";
@@ -312,21 +313,7 @@ export function LessonView({ lesson, course }: { lesson: Lesson; course: Course 
         {/* Sticky outline */}
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              This lesson
-            </p>
-            <div className="rounded-2xl border border-border bg-card p-4 text-sm">
-              <p className="font-semibold">How we teach</p>
-              <ol className="mt-2 space-y-1 text-muted-foreground">
-                <li>1. Story &amp; problem</li>
-                <li>2. Visual intuition</li>
-                <li>3. Plain-English idea</li>
-                <li>4. Maths</li>
-                <li>5. Python you run</li>
-                <li>6. Practice &amp; quiz</li>
-                <li>7. Project &amp; career</li>
-              </ol>
-            </div>
+            <LessonOutline course={course} currentLessonId={lesson.id} />
             <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm">
               <p className="font-semibold text-primary">Stuck?</p>
               <p className="mt-1 text-muted-foreground">
