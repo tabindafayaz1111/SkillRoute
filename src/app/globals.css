@@ -5,21 +5,22 @@
 @layer base {
   :root {
     /* Light theme — soft, warm-neutral surfaces with depth (not flat white). */
-    --background: 220 40% 98%;
-    --foreground: 224 24% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 24% 12%;
-    --primary: 38 92% 48%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 220 26% 94%;
-    --secondary-foreground: 224 22% 18%;
-    --muted: 220 26% 95%;
-    --muted-foreground: 222 12% 42%;
-    --accent: 40 92% 50%;
-    --accent-foreground: 222 47% 11%;
-    --border: 220 22% 89%;
-    --input: 220 22% 89%;
-    --ring: 38 92% 48%;
+    /* Palette: #FFFFFF bg · #F8FAFC card · #14B8A6 primary · #0F766E secondary · #111827 text */
+    --background: 0 0% 100%;
+    --foreground: 222 39% 11%;
+    --card: 210 40% 98%;
+    --card-foreground: 222 39% 11%;
+    --primary: 173 80% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 30% 20%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 175 77% 26%;
+    --accent-foreground: 0 0% 100%;
+    --border: 214 28% 88%;
+    --input: 214 28% 88%;
+    --ring: 173 80% 40%;
     --success: 142 71% 40%;
     --warning: 32 95% 44%;
     --danger: 0 78% 55%;
@@ -33,22 +34,22 @@
   }
 
   .dark {
-    /* Palette: #0B1120 bg · #1E293B card · #F59E0B primary · #FFD166 accent · #FFF text */
-    --background: 222 49% 8%;
-    --foreground: 0 0% 100%;
-    --card: 217 33% 17%;
-    --card-foreground: 0 0% 100%;
-    --primary: 38 92% 50%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 30% 22%;
+    /* Dark counterpart of the teal palette */
+    --background: 222 47% 8%;
+    --foreground: 0 0% 98%;
+    --card: 222 40% 13%;
+    --card-foreground: 0 0% 98%;
+    --primary: 172 70% 45%;
+    --primary-foreground: 222 47% 10%;
+    --secondary: 217 30% 20%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 217 30% 20%;
-    --muted-foreground: 215 20% 70%;
-    --accent: 42 100% 70%;
-    --accent-foreground: 222 47% 11%;
-    --border: 217 26% 27%;
-    --input: 217 26% 27%;
-    --ring: 38 92% 50%;
+    --muted: 217 30% 18%;
+    --muted-foreground: 215 20% 68%;
+    --accent: 174 66% 42%;
+    --accent-foreground: 222 47% 10%;
+    --border: 217 26% 25%;
+    --input: 217 26% 25%;
+    --ring: 172 70% 45%;
     --success: 142 64% 52%;
     --warning: 38 92% 55%;
     --danger: 0 72% 60%;
