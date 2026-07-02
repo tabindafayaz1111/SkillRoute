@@ -52,7 +52,7 @@ export function AiMentor() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen((o) => !o)}
         aria-label="Open AI Mentor"
-        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-primary via-fuchsia-500 to-accent text-white shadow-xl shadow-primary/40"
+        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-white shadow-xl shadow-primary/40"
       >
         <AnimatePresence mode="wait">
           {open ? (

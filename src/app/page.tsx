@@ -167,7 +167,7 @@ export default function HomePage() {
 
       {/* ===== CTA ===== */}
       <section className="container py-16">
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary via-fuchsia-600 to-accent p-12 text-center text-white">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-accent p-12 text-center text-white">
           <AiParticles count={16} />
           <div className="relative">
             <h2 className="text-3xl font-black md:text-4xl">Your ML journey starts today</h2>

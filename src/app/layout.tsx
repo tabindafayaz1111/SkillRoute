@@ -27,6 +27,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${mono.variable}`}>
+      <head>
+        {/* Apply the saved brand palette before paint to avoid a color flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var p=localStorage.getItem('skillroute-palette');if(p)document.documentElement.setAttribute('data-palette',p)}catch(e){}",
+          }}
+        />
+      </head>
       <body className="min-h-screen font-sans">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ProgressProvider>

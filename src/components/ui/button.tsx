@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:brightness-110",
         gradient:
-          "bg-gradient-to-r from-primary via-fuchsia-500 to-accent text-white shadow-lg shadow-primary/30 hover:brightness-110",
+          "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30 hover:brightness-110",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         outline:
