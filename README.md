@@ -3,7 +3,7 @@
 An interactive platform to learn **coding, data, and AI** — from absolute zero to job-ready.
 Fun enough for a curious beginner, deep enough for a future expert.
 
-Think *Duolingo + Brilliant + Kaggle Learn*, across **21 courses in 5 tracks**: story-first
+Think *Duolingo + Brilliant + Kaggle Learn*, across **23 courses in 5 tracks**: story-first
 lessons, live in-browser code, a real AI mentor, projects, certificates, and full gamification.
 
 🔗 **Live:** https://skill-route-rho.vercel.app
@@ -13,12 +13,12 @@ lessons, live in-browser code, a real AI mentor, projects, certificates, and ful
 
 ---
 
-## 📚 The catalog — 21 courses across 5 tracks
+## 📚 The catalog — 23 courses across 5 tracks
 
 | Track | Courses |
 |---|---|
 | **AI & Machine Learning** | Machine Learning · Deep Learning |
-| **AI Engineering & Tools** | Python for Data Science · LLM & Generative AI Engineering · Git & GitHub · Computer Graphics |
+| **AI Engineering & Tools** | Python for Data Science · LLM & Generative AI Engineering · RAG (Retrieval-Augmented Generation) · Building with Claude · Git & GitHub · Computer Graphics |
 | **Programming Languages** | Python · JavaScript · C++ · Java |
 | **Web & Full-Stack** | Full-Stack Web Dev · React · Node.js · Spring Boot · Django |
 | **Data & Analytics** | SQL · Statistics · Linear Algebra · Excel · Power BI · Tableau |
@@ -32,7 +32,7 @@ mistakes → interview questions → cheat sheet.
 | Area | Notes |
 |------|-------|
 | **Premium homepage** | Animated AI-particle hero, personalized *Continue Learning* card, featured courses, light/dark |
-| **Catalog** | 21 courses grouped by category with quick-nav |
+| **Catalog** | 23 courses grouped by category with quick-nav |
 | **Rich lesson engine** | The full teaching flow above, plus a sticky course outline with completion ticks |
 | **Live code playground** | Real CPython via **Pyodide** (WASM) + **Monaco** editor; run, reset, hints, solutions, friendly error explanations |
 | **AI Mentor** | Floating tutor on every page — **real Claude** when an API key is set, with a helpful offline fallback otherwise |

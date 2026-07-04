@@ -26,6 +26,8 @@ import { tableau } from "./lessons/tableau";
 import { genaiLlm } from "./lessons/genai-llm";
 import { git } from "./lessons/git";
 import { computerGraphics } from "./lessons/computer-graphics";
+import { claude } from "./lessons/claude";
+import { rag } from "./lessons/rag";
 
 /**
  * Hand-authored, full lessons. Not every lesson in the outline is written to
@@ -365,6 +367,8 @@ const authored: Record<string, LessonBody> = {
   ...genaiLlm,
   ...git,
   ...computerGraphics,
+  ...claude,
+  ...rag,
 };
 
 /** Build a structured fallback so unlisted lessons still render usefully. */

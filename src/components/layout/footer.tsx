@@ -46,7 +46,7 @@ export function Footer() {
           </Link>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
             The most fun way to learn to code, analyze data, and build with AI — from absolute zero
-            to job-ready. 21 courses across 5 tracks, free forever.
+            to job-ready. 23 courses across 5 tracks, free forever.
           </p>
         </div>
         {groups.map((g) => (
