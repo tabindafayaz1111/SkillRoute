@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock, FolderGit2, Signal, ArrowRight } from "lucide-react";
 import type { Course } from "@/types";
@@ -9,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useProgress } from "@/components/providers/progress-provider";
+import { useAuth } from "@/components/providers/auth-provider";
 import { courseProgress, nextLesson } from "@/lib/course-utils";
 import { cn } from "@/lib/utils";
 
@@ -21,10 +21,18 @@ const difficultyVariant = {
 
 export function CourseCard({ course, index = 0 }: { course: Course; index?: number }) {
   const { completedLessons } = useProgress();
+  const { user, openLogin } = useAuth();
   const prog = courseProgress(course, completedLessons);
   const next = nextLesson(course, completedLessons);
   const started = prog.done > 0;
   const href = next ? `/learn/${course.id}/${next.lesson.id}` : `/courses/${course.id}`;
+
+  function handleStart(e: React.MouseEvent) {
+    if (!user) {
+      e.preventDefault();
+      openLogin(href);
+    }
+  }
 
   return (
     <motion.div
@@ -85,10 +93,10 @@ export function CourseCard({ course, index = 0 }: { course: Course; index?: numb
           </div>
 
           <Button asChild variant="gradient" size="lg" className="mt-6 w-full">
-            <Link href={href}>
+            <a href={href} onClick={handleStart}>
               {started ? "Continue Learning" : "Start Learning"}
               <ArrowRight className="h-4 w-4" />
-            </Link>
+            </a>
           </Button>
         </div>
       </div>

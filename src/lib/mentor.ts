@@ -88,7 +88,7 @@ const KNOWLEDGE: { match: RegExp; reply: string }[] = [
 ];
 
 const FALLBACK =
-  "I'm running in *offline mode* right now, so I only have a handful of topics built in — and I don't want to give you a confident but wrong answer to this one. 🙏\n\nI can answer these offline: neurons & layers (forward pass), gradient descent, overfitting, transformers/LLMs, NumPy, Pandas, regression, classification, epochs/batches, projects, interviews, and \"where do I start\".\n\nTo let me answer *anything* correctly, the site owner just needs to add an ANTHROPIC_API_KEY in Vercel (Settings → Environment Variables) and redeploy — then I become a full Claude tutor. Meanwhile, try rephrasing toward one of the topics above and I'll dig in.";
+  "I'm in *offline mode* right now, so I only have a handful of built-in topics. 🙏\n\nI can answer these offline: neurons & layers (forward pass), gradient descent, overfitting, transformers/LLMs, NumPy, Pandas, regression, classification, epochs/batches, projects, interviews, and \"where do I start\".\n\nTry rephrasing your question toward one of those topics and I'll give you a real answer!";
 
 /** Offline responder — gives a real, useful answer based on keywords. */
 export function localMentorReply(question: string, _history: MentorMessage[] = []): string {

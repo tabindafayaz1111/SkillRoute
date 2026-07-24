@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, Send, Sparkles, X, GraduationCap } from "lucide-react";
+import { Bot, Send, Sparkles, X, GraduationCap, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { askMentor, type MentorMessage } from "@/lib/mentor";
 
 const SUGGESTIONS = [
+  "Where do I start? 🚀",
   "I'm feeling overwhelmed 😅",
   "Explain overfitting simply",
   "How does gradient descent work?",
@@ -18,11 +19,12 @@ export function AiMentor() {
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState("");
   const [thinking, setThinking] = React.useState(false);
+  const [aiSource, setAiSource] = React.useState<"gemini" | "claude" | "offline" | null>(null);
   const [messages, setMessages] = React.useState<MentorMessage[]>([
     {
       role: "mentor",
       content:
-        "Hi! I'm your AI Mentor 👋 I won't just hand you answers — I'll help you *understand*. Ask me anything, or tap a suggestion below.",
+        "Hi! I'm your AI Mentor 👋 Powered by Google Gemini — ask me *anything* about coding, AI, data, or your career. I'll teach, not just tell!",
     },
   ]);
   const endRef = React.useRef<HTMLDivElement>(null);
@@ -37,9 +39,19 @@ export function AiMentor() {
     setInput("");
     setMessages((m) => [...m, { role: "user", content: q }]);
     setThinking(true);
-    const reply = await askMentor(q, messages);
+    try {
+      const res = await fetch("/api/mentor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q, messages }),
+      });
+      const data = await res.json();
+      if (data.source) setAiSource(data.source);
+      setMessages((m) => [...m, { role: "mentor", content: data.reply || "Sorry, I couldn't respond. Try again!" }]);
+    } catch {
+      setMessages((m) => [...m, { role: "mentor", content: "Network error — please check your connection and try again." }]);
+    }
     setThinking(false);
-    setMessages((m) => [...m, { role: "mentor", content: reply }]);
   }
 
   return (
@@ -84,7 +96,14 @@ export function AiMentor() {
                 <p className="text-sm font-bold">AI Mentor</p>
                 <p className="text-xs text-muted-foreground">Teaches, never just tells</p>
               </div>
-              <Sparkles className="ml-auto h-4 w-4 text-primary" />
+              <div className="ml-auto flex items-center gap-1.5">
+                {aiSource === "gemini" && (
+                  <span className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-500">
+                    <Zap className="h-2.5 w-2.5" /> Gemini
+                  </span>
+                )}
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
             </div>
 
             <div className="flex-1 space-y-3 overflow-y-auto p-4">
