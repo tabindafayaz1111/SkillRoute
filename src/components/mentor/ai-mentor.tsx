@@ -19,7 +19,7 @@ export function AiMentor() {
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState("");
   const [thinking, setThinking] = React.useState(false);
-  const [aiSource, setAiSource] = React.useState<"gemini" | "claude" | "offline" | null>(null);
+  const [aiSource, setAiSource] = React.useState<"gemini" | "claude" | "offline" | "guardrail" | null>(null);
   const [messages, setMessages] = React.useState<MentorMessage[]>([
     {
       role: "mentor",
@@ -99,7 +99,12 @@ export function AiMentor() {
               <div className="ml-auto flex items-center gap-1.5">
                 {aiSource === "gemini" && (
                   <span className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-500">
-                    <Zap className="h-2.5 w-2.5" /> Gemini
+                    <Zap className="h-2.5 w-2.5" /> Gemini Flash Lite
+                  </span>
+                )}
+                {aiSource === "guardrail" && (
+                  <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-500">
+                    <Sparkles className="h-2.5 w-2.5" /> Mentor Guide
                   </span>
                 )}
                 <Sparkles className="h-4 w-4 text-primary" />

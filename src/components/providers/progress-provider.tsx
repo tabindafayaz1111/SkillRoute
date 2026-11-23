@@ -1,15 +1,17 @@
 "use client";
 
 /**
- * Local-first learner progress + gamification store.
+ * Learner progress + gamification store with local-first persistence
+ * and automatic Supabase cloud synchronization.
  *
- * This intentionally persists to localStorage so the whole app is fully
- * functional with zero backend config. To go multi-device, swap the
- * `load`/`persist` functions for Supabase calls keyed on the Clerk user id
- * (see README → "Wiring up Clerk + Supabase"). The public API stays identical.
+ * When signed in, user progress (XP, streak, completed lessons, notes, quiz scores)
+ * is automatically fetched from Supabase, merged with any local progress, and synced
+ * back across devices in real time.
  */
 
 import * as React from "react";
+import { useAuth } from "./auth-provider";
+import { createClient } from "@/lib/supabase";
 
 export interface LearnerState {
   displayName: string;
@@ -38,7 +40,11 @@ const DEFAULT_STATE: LearnerState = {
   activity: {},
 };
 
-const STORAGE_KEY = "ml-academy:progress:v1";
+const LEGACY_STORAGE_KEY = "ml-academy:progress:v1";
+
+function getStorageKey(userId?: string | null) {
+  return userId ? `ml-academy:progress:${userId}` : LEGACY_STORAGE_KEY;
+}
 
 interface ProgressContextValue extends LearnerState {
   level: number;
@@ -53,6 +59,7 @@ interface ProgressContextValue extends LearnerState {
   recordQuiz: (lessonId: string, scorePct: number) => void;
   setDisplayName: (name: string) => void;
   reset: () => void;
+  syncWithCloud: () => Promise<void>;
 }
 
 const ProgressContext = React.createContext<ProgressContextValue | null>(null);
@@ -79,30 +86,198 @@ function daysBetween(a: string, b: string) {
   return Math.round(diff / 86_400_000);
 }
 
+/** Merges local and cloud state, keeping the best of both. */
+function mergeLearnerStates(local: LearnerState, cloud?: Partial<LearnerState> | null): LearnerState {
+  if (!cloud) return local;
+
+  const completedLessons = Array.from(
+    new Set([...(local.completedLessons || []), ...(cloud.completedLessons || [])])
+  );
+  const bookmarks = Array.from(
+    new Set([...(local.bookmarks || []), ...(cloud.bookmarks || [])])
+  );
+  const xp = Math.max(local.xp || 0, cloud.xp || 0);
+  const coins = Math.max(local.coins || 0, cloud.coins || 0);
+  const streakDays = Math.max(local.streakDays || 0, cloud.streakDays || 0);
+  const lastActiveISO = cloud.lastActiveISO || local.lastActiveISO;
+  const displayName = cloud.displayName || local.displayName || "";
+  const notes = { ...(local.notes || {}), ...(cloud.notes || {}) };
+  const quizScores = { ...(local.quizScores || {}), ...(cloud.quizScores || {}) };
+  const activity = { ...(local.activity || {}), ...(cloud.activity || {}) };
+
+  return {
+    displayName,
+    xp,
+    coins,
+    streakDays,
+    lastActiveISO,
+    completedLessons,
+    bookmarks,
+    notes,
+    quizScores,
+    activity,
+  };
+}
+
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const supabase = createClient();
+
   const [state, setState] = React.useState<LearnerState>(DEFAULT_STATE);
   const [hydrated, setHydrated] = React.useState(false);
+  const prevUserIdRef = React.useRef<string | null | undefined>(undefined);
+  const syncTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // Load once on mount.
-  React.useEffect(() => {
+  // Load from local storage helper
+  const loadLocalState = React.useCallback((userId?: string | null): LearnerState => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...DEFAULT_STATE, ...JSON.parse(raw) });
+      const key = getStorageKey(userId);
+      const raw = localStorage.getItem(key);
+      if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+
+      // Fallback to legacy key if user-specific key not populated yet
+      if (userId) {
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (legacyRaw) return { ...DEFAULT_STATE, ...JSON.parse(legacyRaw) };
+      }
     } catch {
-      /* ignore corrupt storage */
+      /* ignore storage errors */
     }
-    setHydrated(true);
+    return DEFAULT_STATE;
   }, []);
 
-  // Persist on change (after hydration).
+  // Sync state to Supabase cloud (user_metadata + optional user_progress table)
+  const pushToCloud = React.useCallback(
+    async (learnerState: LearnerState, currentUser = user) => {
+      if (!currentUser) return;
+      try {
+        // 1. Update user_metadata in Supabase Auth (always works out of the box)
+        await supabase.auth.updateUser({
+          data: {
+            progress: learnerState,
+            display_name: learnerState.displayName || currentUser.user_metadata?.display_name,
+          },
+        });
+
+        // 2. Try upserting to user_progress table if configured in database
+        try {
+          await (supabase as any)
+            .from("user_progress")
+            .upsert({
+              user_id: currentUser.id,
+              progress: learnerState,
+              updated_at: new Date().toISOString(),
+            });
+        } catch {
+          // Table might not exist; metadata already updated
+        }
+      } catch (err) {
+        console.warn("Failed to sync progress to cloud:", err);
+      }
+    },
+    [supabase, user]
+  );
+
+  // Fetch from Supabase and merge
+  const syncWithCloud = React.useCallback(async () => {
+    if (!user) return;
+
+    let local = loadLocalState(user.id);
+    const userMetaName = user.user_metadata?.display_name || user.email?.split("@")[0] || "";
+    if (userMetaName && !local.displayName) {
+      local = { ...local, displayName: userMetaName };
+    }
+
+    let cloudState: Partial<LearnerState> | null =
+      (user.user_metadata?.progress as Partial<LearnerState>) || null;
+
+    // Check table if metadata was empty
+    try {
+      const res = await (supabase as any)
+        .from("user_progress")
+        .select("progress")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (res?.data?.progress) {
+        cloudState = { ...cloudState, ...(res.data.progress as Partial<LearnerState>) };
+      }
+    } catch {
+      // Table might not exist; safe to ignore
+    }
+
+    const merged = mergeLearnerStates(local, {
+      ...cloudState,
+      displayName: userMetaName || cloudState?.displayName || local.displayName,
+    });
+
+    setState(merged);
+
+    // Persist locally
+    try {
+      localStorage.setItem(getStorageKey(user.id), JSON.stringify(merged));
+    } catch {
+      /* ignore */
+    }
+
+    // Push merged state to cloud if local had more progress
+    await pushToCloud(merged, user);
+  }, [user, supabase, loadLocalState, pushToCloud]);
+
+  // Handle user authentication transitions (sign-in, switch user, sign-out)
+  React.useEffect(() => {
+    const currentUserId = user?.id ?? null;
+
+    if (prevUserIdRef.current === undefined) {
+      // Initial mount
+      prevUserIdRef.current = currentUserId;
+      if (user) {
+        syncWithCloud().finally(() => setHydrated(true));
+      } else {
+        const initial = loadLocalState(null);
+        setState(initial);
+        setHydrated(true);
+      }
+      return;
+    }
+
+    if (prevUserIdRef.current !== currentUserId) {
+      prevUserIdRef.current = currentUserId;
+
+      if (user) {
+        // User just signed in: fetch cloud progress and populate
+        syncWithCloud();
+      } else {
+        // User logged out: revert to guest/default state
+        const guestState = loadLocalState(null);
+        setState(guestState);
+      }
+    }
+  }, [user, syncWithCloud, loadLocalState]);
+
+  // Persist state on change and debounce cloud sync
   React.useEffect(() => {
     if (!hydrated) return;
+
+    const storageKey = getStorageKey(user?.id);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
     } catch {
       /* storage full / disabled */
     }
-  }, [state, hydrated]);
+
+    // If user is logged in, sync to Supabase with debounce
+    if (user) {
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = setTimeout(() => {
+        pushToCloud(state, user);
+      }, 1000);
+    }
+
+    return () => {
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    };
+  }, [state, hydrated, user, pushToCloud]);
 
   const touchStreak = React.useCallback((prev: LearnerState): LearnerState => {
     const today = todayISO();
@@ -190,6 +365,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     recordQuiz,
     setDisplayName,
     reset,
+    syncWithCloud,
   };
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

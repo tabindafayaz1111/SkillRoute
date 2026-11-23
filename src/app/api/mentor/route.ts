@@ -1,35 +1,48 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { localMentorReply, type MentorMessage } from "@/lib/mentor";
+import {
+  MENTOR_SYSTEM_PROMPT,
+  GEMINI_SAFETY_SETTINGS,
+  evaluateInputGuardrails,
+  evaluateOutputGuardrails,
+} from "@/lib/guardrails";
 
 export const runtime = "nodejs";
 
 /**
  * AI Mentor endpoint — priority order:
- *  1. Google Gemini via direct REST API (handles both AQ. OAuth tokens and AIza API keys)
+ *  1. Google Gemini Flash-Lite via direct REST API (handles both AQ. OAuth tokens and AIza API keys)
  *  2. Anthropic Claude (if ANTHROPIC_API_KEY set)
  *  3. Offline local keyword responder (always works, never crashes)
+ *
+ * Includes pre-flight and post-flight guardrails aligned with SkillRoute's
+ * pedagogical standards, academic integrity, and safety boundaries.
  */
 
-const SYSTEM_PROMPT = `You are the "AI Mentor" inside SkillRoute, a platform that teaches programming, web development, data analytics, and AI to complete beginners — including people who have never written code and get bored by dry, academic explanations.
+// Model priority cascade: prefers Flash-Lite models for fast, low-latency, cost-effective mentoring.
+const configuredModel = process.env.GEMINI_MODEL?.trim();
 
-Your job is to ACTUALLY HELP and TEACH, clearly and warmly. Rules:
-- Answer the real question directly. Give a genuinely useful explanation — do not just deflect.
-- Assume zero prior knowledge. Explain like you're talking to a curious friend who hates jargon.
-- Lead every concept with a plain-English idea or everyday analogy BEFORE any math or code.
-- Keep answers short and skimmable: 2-4 short paragraphs or a tiny bullet list. Never a wall of text.
-- When you show code, keep it minimal and explain each line in plain words.
-- Be encouraging and human. A little warmth or humour is good. Never condescending.
-- If the learner is overwhelmed, slow down, reassure them, and break the idea into one tiny piece.
-Stay on topic: coding, web, data, AI/ML, tools (Git, SQL, Excel), projects, careers, and study help.`;
+const GEMINI_MODELS: { api: "v1beta" | "v1"; model: string }[] = [
+  // If user explicitly configured a specific model in environment, try it first
+  ...(configuredModel ? [{ api: "v1beta" as const, model: configuredModel }] : []),
 
-// Models to try in order — covers both v1 and v1beta endpoints.
-const GEMINI_MODELS = [
+  // Gemini Flash-Lite family (fastest response, lowest latency)
+  { api: "v1beta", model: "gemini-2.0-flash-lite" },
+  { api: "v1beta", model: "gemini-2.0-flash-lite-preview-02-05" },
+  { api: "v1beta", model: "gemini-2.0-flash-lite-preview" },
+  { api: "v1beta", model: "gemini-2.5-flash-lite" },
+  { api: "v1beta", model: "gemini-1.5-flash-8b" },
+
+  // General Gemini Flash family fallbacks
+  { api: "v1beta", model: "gemini-2.0-flash" },
   { api: "v1beta", model: "gemini-1.5-flash" },
   { api: "v1beta", model: "gemini-1.5-flash-latest" },
+
+  // Standard Gemini fallbacks
   { api: "v1beta", model: "gemini-pro" },
+  { api: "v1",     model: "gemini-1.5-flash" },
   { api: "v1",     model: "gemini-pro" },
-  { api: "v1",     model: "gemini-1.5-flash-001" },
 ];
 
 async function callGeminiREST(
@@ -37,22 +50,21 @@ async function callGeminiREST(
   question: string,
   history: MentorMessage[]
 ): Promise<string | null> {
-  // AQ. = OAuth2 access token → use Bearer header
-  // AIza... = API key → use ?key= query param
   const isOAuth = geminiKey.startsWith("AQ.");
 
-  // Build contents array (system prompt prepended as first user turn for compatibility)
-  const systemMsg = { role: "user",  parts: [{ text: `[System]: ${SYSTEM_PROMPT}` }] };
-  const systemAck = { role: "model", parts: [{ text: "Understood. I'll follow those instructions." }] };
+  // System prompt turn for backward compatibility across all endpoints
+  const systemMsg = { role: "user", parts: [{ text: `[System Instruction]:\n${MENTOR_SYSTEM_PROMPT}` }] };
+  const systemAck = { role: "model", parts: [{ text: "Understood. I will strictly act as the SkillRoute AI Mentor following all pedagogical alignment rules, safety boundaries, and guardrails." }] };
 
+  // Format message history (limit to last 10 messages for token efficiency and security)
   const historyMsgs = history
+    .slice(-10)
     .filter((m) => m.role === "user" || m.role === "mentor")
     .map((m) => ({
       role: m.role === "mentor" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
 
-  // Drop leading model messages (Gemini requires history to start with user)
   const firstUserIdx = historyMsgs.findIndex((m) => m.role === "user");
   const cleanHistory = firstUserIdx >= 0 ? historyMsgs.slice(firstUserIdx) : [];
 
@@ -72,26 +84,39 @@ async function callGeminiREST(
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (isOAuth) headers["Authorization"] = `Bearer ${geminiKey}`;
 
+      const requestPayload: Record<string, any> = {
+        contents,
+        generationConfig: {
+          maxOutputTokens: 800,
+          temperature: 0.7,
+        },
+        safetySettings: GEMINI_SAFETY_SETTINGS,
+      };
+
+      // v1beta supports native system_instruction parameter
+      if (api === "v1beta") {
+        requestPayload.system_instruction = {
+          parts: [{ text: MENTOR_SYSTEM_PROMPT }],
+        };
+      }
+
       const res = await fetch(baseUrl, {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          contents,
-          generationConfig: { maxOutputTokens: 700, temperature: 0.7 },
-        }),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!res.ok) {
         const errText = await res.text();
         console.warn(`Gemini ${api}/${model} failed (${res.status}):`, errText.slice(0, 200));
-        continue; // Try next model
+        continue; // Try next model in priority order
       }
 
       const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-      if (text) {
+      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      if (rawText) {
         console.log(`✓ Gemini responded via ${api}/${model}`);
-        return text;
+        return evaluateOutputGuardrails(rawText);
       }
     } catch (err) {
       console.warn(`Gemini ${api}/${model} threw:`, err);
@@ -104,6 +129,7 @@ async function callGeminiREST(
 export async function POST(req: Request) {
   let history: MentorMessage[] = [];
   let question = "";
+
   try {
     const body = await req.json();
     history = Array.isArray(body?.messages) ? body.messages : [];
@@ -112,7 +138,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  // ── 1. Try Google Gemini (free) ──────────────────────────────────────────
+  // ── 0. Pre-Flight Input Guardrails ─────────────────────────────────────────
+  const guardrailCheck = evaluateInputGuardrails(question, history);
+  if (!guardrailCheck.allowed) {
+    return NextResponse.json({
+      reply: guardrailCheck.deflectionReply,
+      source: "guardrail",
+    });
+  }
+
+  // ── 1. Try Google Gemini Flash-Lite (preferred) ───────────────────────────
   const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
   if (geminiKey) {
     const reply = await callGeminiREST(geminiKey, question, history);
@@ -121,13 +156,14 @@ export async function POST(req: Request) {
     }
   }
 
-  // ── 2. Try Anthropic Claude (optional) ──────────────────────────────────
+  // ── 2. Try Anthropic Claude (fallback LLM) ────────────────────────────────
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   if (anthropicKey) {
     try {
       const client = new Anthropic({ apiKey: anthropicKey });
       const messages = [
         ...history
+          .slice(-10)
           .filter((m) => m.role === "user" || m.role === "mentor")
           .map((m) => ({
             role: (m.role === "mentor" ? "assistant" : "user") as "user" | "assistant",
@@ -138,8 +174,8 @@ export async function POST(req: Request) {
 
       const res = await client.messages.create({
         model: "claude-haiku-4-5",
-        max_tokens: 700,
-        system: SYSTEM_PROMPT,
+        max_tokens: 800,
+        system: MENTOR_SYSTEM_PROMPT,
         messages,
       });
 
@@ -149,8 +185,10 @@ export async function POST(req: Request) {
         .join("\n")
         .trim();
 
+      const finalReply = reply ? evaluateOutputGuardrails(reply) : localMentorReply(question, history);
+
       return NextResponse.json({
-        reply: reply || localMentorReply(question, history),
+        reply: finalReply,
         source: "claude",
       });
     } catch (err) {
@@ -158,6 +196,9 @@ export async function POST(req: Request) {
     }
   }
 
-  // ── 3. Offline fallback ──────────────────────────────────────────────────
-  return NextResponse.json({ reply: localMentorReply(question, history), source: "offline" });
+  // ── 3. Offline fallback ────────────────────────────────────────────────────
+  return NextResponse.json({
+    reply: localMentorReply(question, history),
+    source: "offline",
+  });
 }
